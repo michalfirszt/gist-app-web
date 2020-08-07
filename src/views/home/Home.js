@@ -3,7 +3,7 @@ import GistList from "../../components/gist-list/GistList";
 
 export const Home = () => {
     return (
-        <div>
+        <div className="container">
             <GistList />
         </div>
     )
