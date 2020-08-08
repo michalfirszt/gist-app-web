@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import GistCard from "../gist-card/GistCard";
 import axios from "axios";
 
 class GistList extends Component {
@@ -33,9 +34,9 @@ class GistList extends Component {
     selectGists() {
         return this.state.gists.map(gist => {
             return (
-                <li key={ gist.id }>
-                    { gist.description }
-                </li>
+                <div key={gist.id} className="col-12 mb-4">
+                    <GistCard gist={gist} />
+                </div>
             )
         });
     }
@@ -43,9 +44,9 @@ class GistList extends Component {
     render() {
         return (
             <div>
-                <ul>
+                <div className="row">
                     { this.selectGists() }
-                </ul>
+                </div>
             </div>
         )
     }
