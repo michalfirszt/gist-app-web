@@ -1,14 +1,13 @@
 import React, { Component } from "react";
-import GistCard from "../gist-card/GistCard";
 import ClipLoader from "react-spinners/ClipLoader";
 import axios from "axios";
 
-class GistList extends Component {
+class GistDetails extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            gists: [],
+            gist: {},
             loading: false,
             client: axios.create({
                 baseURL: 'https://api.github.com/',
@@ -21,48 +20,36 @@ class GistList extends Component {
     }
 
     componentDidMount() {
-        this.getGists();
+        this.getGist();
     }
 
-    getGists() {
+    getGist() {
         this.setState({
             loading: true,
         });
 
-        this.state.client.get('gists')
+        this.state.client.get('gists/' + this.props.id)
             .then(response => {
                 this.setState({
-                    gists: response.data,
+                    gist: response.data,
                     loading: false,
                 });
             })
     }
 
-    selectGists() {
-        return this.state.gists.map(gist => {
-            return (
-                <div key={gist.id} className="col-12 mb-4">
-                    <GistCard gist={gist} />
-                </div>
-            )
-        });
-    }
-
     render() {
         return (
             <div>
-                <div className="row">
-                    <div className="col-12">
-                        <div className="row justify-content-center">
-                            <ClipLoader loading={this.state.loading} size={150} />
-                        </div>
+                <div className="col-12">
+                    <div className="row justify-content-center">
+                        <ClipLoader loading={this.state.loading} size={150} />
                     </div>
-
-                    { this.selectGists() }
                 </div>
+
+                { this.state.gist.description }
             </div>
         )
     }
 }
 
-export default GistList;
+export default GistDetails;

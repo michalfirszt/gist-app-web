@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
 class GistCard extends Component {
     constructor(props) {
@@ -30,7 +31,9 @@ class GistCard extends Component {
                     </div>
                 </div>
                 <div className="card-body">
-                    { this.props.gist.description }
+                    <Link to={'/gist/' + this.props.gist.id}>
+                        { this.props.gist.description }
+                    </Link>
 
                     <ul className="mt-4">
                         <li>
