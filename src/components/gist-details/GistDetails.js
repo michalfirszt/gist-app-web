@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
 import axios from "axios";
 
 class GistDetails extends Component {
@@ -7,6 +8,7 @@ class GistDetails extends Component {
 
         this.state = {
             gist: {},
+            loading: false,
             client: axios.create({
                 baseURL: 'https://api.github.com/',
                 responseType: 'json',
@@ -22,17 +24,28 @@ class GistDetails extends Component {
     }
 
     getGist() {
+        this.setState({
+            loading: true,
+        });
+
         this.state.client.get('gists/' + this.props.id)
             .then(response => {
                 this.setState({
                     gist: response.data,
-                })
+                    loading: false,
+                });
             })
     }
 
     render() {
         return (
             <div>
+                <div className="col-12">
+                    <div className="row justify-content-center">
+                        <ClipLoader loading={this.state.loading} size={150} />
+                    </div>
+                </div>
+
                 { this.state.gist.description }
             </div>
         )
