@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import ClipLoader from "react-spinners/ClipLoader";
 import axios from "axios";
+import ClipLoader from "react-spinners/ClipLoader";
+import File from "../file/File";
 
 class GistDetails extends Component {
     constructor(props) {
@@ -8,6 +9,7 @@ class GistDetails extends Component {
 
         this.state = {
             gist: {},
+            files: [],
             loading: false,
             client: axios.create({
                 baseURL: 'https://api.github.com/',
@@ -30,23 +32,48 @@ class GistDetails extends Component {
 
         this.state.client.get('gists/' + this.props.id)
             .then(response => {
+                let fileList = [];
+
+                Object.keys(response.data.files).forEach(key => {
+                    fileList.push(response.data.files[key]);
+                });
+
                 this.setState({
                     gist: response.data,
+                    files: fileList,
                     loading: false,
                 });
             })
     }
 
+    gistFiles() {
+        return this.state.files.map((file, index) => {
+            return (
+                <div key={index} className="col-12 mb-4">
+                    <File file={file} />
+                </div>
+            )
+        })
+    }
+
     render() {
         return (
             <div>
-                <div className="col-12">
-                    <div className="row justify-content-center">
-                        <ClipLoader loading={this.state.loading} size={150} />
+                <div className="row">
+                    <div className="col-12">
+                        <div className="row justify-content-center">
+                            <ClipLoader loading={this.state.loading} size={150} />
+                        </div>
                     </div>
-                </div>
 
-                { this.state.gist.description }
+                    <div className="col-12 mb-5">
+                        <h4>
+                            { this.state.gist.description }
+                        </h4>
+                    </div>
+
+                    { this.gistFiles() }
+                </div>
             </div>
         )
     }
