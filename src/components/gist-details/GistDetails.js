@@ -8,6 +8,7 @@ class GistDetails extends Component {
 
         this.state = {
             gist: {},
+            files: [],
             loading: false,
             client: axios.create({
                 baseURL: 'https://api.github.com/',
@@ -30,8 +31,15 @@ class GistDetails extends Component {
 
         this.state.client.get('gists/' + this.props.id)
             .then(response => {
+                let fileList = [];
+
+                Object.keys(response.data.files).forEach(key => {
+                    fileList.push(response.data.files[key]);
+                });
+
                 this.setState({
                     gist: response.data,
+                    files: fileList,
                     loading: false,
                 });
             })
