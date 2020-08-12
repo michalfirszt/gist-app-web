@@ -2,7 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import GistDetails from "../../components/gist-details/GistDetails";
 
-export const Gist = () => {
+function Gist() {
     let { id } = useParams();
 
     return (
@@ -11,3 +11,5 @@ export const Gist = () => {
         </div>
     )
 }
+
+export default Gist;

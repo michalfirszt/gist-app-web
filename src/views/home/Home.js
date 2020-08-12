@@ -1,7 +1,7 @@
 import React from "react";
 import GistList from "../../components/gist-list/GistList";
 
-export const Home = () => {
+function Home() {
     return (
         <div className="row">
             <div className="col-12">
@@ -10,3 +10,5 @@ export const Home = () => {
         </div>
     )
 }
+
+export default Home;
