@@ -1,9 +1,8 @@
 import React from 'react';
 import './App.scss';
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
+import Routes from "./Routes";
 import Navbar from "./components/navbar/Navbar";
-import { Home } from "./views/home/Home";
-import { Gist } from "./views/gist/Gist";
 
 function App() {
     return (
@@ -11,14 +10,7 @@ function App() {
             <Navbar />
 
             <div className="container mt-5 pt-5">
-                <Switch>
-                    <Route path="/gist/:id">
-                        <Gist />
-                    </Route>
-                    <Route path="/">
-                        <Home />
-                    </Route>
-                </Switch>
+                <Routes />
             </div>
         </Router>
     );
