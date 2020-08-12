@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
 import File from "../file/File";
+import CommentList from "../comment-list/CommentList";
 
 class GistDetails extends Component {
     constructor(props) {
@@ -73,6 +74,10 @@ class GistDetails extends Component {
                     </div>
 
                     { this.gistFiles() }
+
+                    <div className="col-12">
+                        <CommentList id={this.props.id} />
+                    </div>
                 </div>
             </div>
         )
