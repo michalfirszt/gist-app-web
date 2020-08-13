@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
 import Comment from "../comment/Comment";
+import CommentForm from "../comment-form/CommentForm";
 
 class CommentList extends Component {
     constructor(props) {
@@ -18,6 +19,8 @@ class CommentList extends Component {
                 }
             }),
         };
+
+        this.addNewComment = this.addNewComment.bind(this);
     }
 
     componentDidMount() {
@@ -48,6 +51,16 @@ class CommentList extends Component {
         })
     }
 
+    addNewComment(comment) {
+        let newCommentList = this.state.comments;
+
+        newCommentList.push(comment);
+
+        this.setState({
+            comments: newCommentList,
+        });
+    }
+
     render() {
         return (
             <div className="row">
@@ -63,6 +76,10 @@ class CommentList extends Component {
 
                     <div className="row">
                         { this.selectComments() }
+                    </div>
+
+                    <div className="mb-4">
+                        <CommentForm id={this.props.id} addNewComment={this.addNewComment} />
                     </div>
                 </div>
             </div>
