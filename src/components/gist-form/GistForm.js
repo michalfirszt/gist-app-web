@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
+import ClipLoader from "react-spinners/ClipLoader";
+import Swal from "sweetalert2";
 import FileSubform from "../file-subform/FileSubform";
 
 class GistForm extends Component {
@@ -11,6 +13,7 @@ class GistForm extends Component {
             public: true,
             files: [],
             nextFileId: 1,
+            loading: false,
             client: axios.create({
                 baseURL: 'https://api.github.com/',
                 responseType: 'json',
@@ -102,6 +105,10 @@ class GistForm extends Component {
     handleSubmit(event) {
         event.preventDefault();
 
+        this.setState({
+            loading: true,
+        });
+
         let files = {};
 
         this.state.files.forEach(file => {
@@ -116,7 +123,17 @@ class GistForm extends Component {
             public: this.state.public,
             files: files,
         }).then(response => {
-            alert('Gist created successfully');
+            this.setState({
+                loading: false,
+            });
+
+            Swal.fire({
+                icon: 'success',
+                position: 'top-end',
+                title: 'Gist created successfully',
+                showConfirmButton: false,
+                timer: 2500,
+            });
         })
     }
 
@@ -139,7 +156,11 @@ class GistForm extends Component {
                         { this.selectFiles() }
                     </div>
                     <div className="form-group">
-                        <input type="submit" className="btn btn-primary"/>
+                        {this.state.loading ? (
+                            <ClipLoader loading={this.state.loading} size={100} />
+                        ) : (
+                            <input type="submit" className="btn btn-primary"/>
+                        )}
                     </div>
                 </form>
             </div>

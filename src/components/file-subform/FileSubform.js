@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import AceEditor from "react-ace";
+import "ace-builds/src-noconflict/mode-jsx";
+import "ace-builds/src-noconflict/theme-github";
 
 class FileSubform extends Component {
     constructor(props) {
@@ -11,6 +14,7 @@ class FileSubform extends Component {
         };
 
         this.handleChange = this.handleChange.bind(this);
+        this.updateCode = this.updateCode.bind(this);
     }
 
     static defaultProps = {
@@ -31,48 +35,52 @@ class FileSubform extends Component {
                 filename = event.target.value;
                 break;
 
-            case 'content':
-                content = event.target.value;
-                break;
-
             default:
                 break;
         }
 
-        let task = {
+        let file = {
             id: this.state.id,
             filename: filename,
             content: content,
         };
 
-        this.props.updateFile(task);
+        this.props.updateFile(file);
+    }
+
+    updateCode(code) {
+        this.setState({
+            content: code,
+        });
+
+        let file = {
+            id: this.state.id,
+            filename: this.state.filename,
+            content: code,
+        };
+
+        this.props.updateFile(file);
     }
 
     render() {
         return (
             <div className="card">
-                <div className="card-body">
-                    <div className="form-group">
-                        <label>
-                            Filename
-                        </label>
-                        <input type="text"
-                               name="filename"
-                               className="form-control"
-                               value={this.state.filename}
-                               onChange={this.handleChange}
-                               required />
-                    </div>
-                    <div className="form-group">
-                        <label>
-                            Content
-                        </label>
-                        <textarea name="content"
-                                  className="form-control"
-                                  value={this.state.content}
-                                  onChange={this.handleChange}
-                                  required />
-                    </div>
+                <div className="card-header">
+                    <input type="text"
+                           name="filename"
+                           placeholder="Filename with extension"
+                           className="form-control"
+                           value={this.state.filename}
+                           onChange={this.handleChange}
+                           required />
+                </div>
+                <div className="card-body p-0">
+                    <AceEditor mode="jsx"
+                               theme="github"
+                               name="content"
+                               onChange={this.updateCode}
+                               height="200px"
+                               width="100%" />
                 </div>
             </div>
         )
