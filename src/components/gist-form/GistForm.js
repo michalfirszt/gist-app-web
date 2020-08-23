@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
+import Swal from "sweetalert2";
 import FileSubform from "../file-subform/FileSubform";
 
 class GistForm extends Component {
@@ -126,7 +127,13 @@ class GistForm extends Component {
                 loading: false,
             });
 
-            alert('Gist created successfully');
+            Swal.fire({
+                icon: 'success',
+                position: 'top-end',
+                title: 'Gist created successfully',
+                showConfirmButton: false,
+                timer: 2500,
+            });
         })
     }
 
