@@ -78,6 +78,7 @@ class FileSubform extends Component {
                     <AceEditor mode="jsx"
                                theme="github"
                                name="content"
+                               defaultValue={this.state.content}
                                onChange={this.updateCode}
                                height="200px"
                                width="100%" />
