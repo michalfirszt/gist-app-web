@@ -31,7 +31,11 @@ class GistForm extends Component {
     }
 
     componentDidMount() {
-        this.addNewFile();
+        if (this.props.gistId) {
+            this.getGist();
+        } else {
+            this.addNewFile();
+        }
     }
 
     handleChange(event) {
@@ -40,13 +44,31 @@ class GistForm extends Component {
         })
     }
 
-    addNewFile() {
+    getGist() {
+        this.setState({
+            loading: true,
+        });
+
+        this.state.client.get('gists/' + this.props.gistId)
+            .then(response => {
+                Object.keys(response.data.files).forEach(key => {
+                    this.addNewFile(response.data.files[key].filename, response.data.files[key].content)
+                });
+
+                this.setState({
+                    description: response.data.description,
+                    loading: false,
+                });
+            })
+    }
+
+    addNewFile(filename = '', content = '') {
         let newFileList = this.state.files;
 
         newFileList.push({
             id: this.state.nextFileId,
-            filename: '',
-            content: '',
+            filename: filename,
+            content: content,
         });
 
         this.setState({
@@ -81,10 +103,13 @@ class GistForm extends Component {
         return (
             <div className="row">
                 <div className="col-12 text-right">
-                    <button className="btn btn-primary mx-2" onClick={this.addNewFile}>
+                    <button className="btn btn-primary mx-2"
+                            onClick={() => this.addNewFile()}>
                         Add File
                     </button>
-                    <button className="btn btn-danger" onClick={this.removeFile} disabled={this.state.files.length === 1}>
+                    <button className="btn btn-danger"
+                            onClick={this.removeFile}
+                            disabled={this.state.files.length === 1}>
                         Remove File
                     </button>
                 </div>
@@ -96,7 +121,10 @@ class GistForm extends Component {
         return this.state.files.map(file => {
             return (
                 <div key={file.id} className="mt-3 mb-3">
-                    <FileSubform id={file.id} updateFile={this.updateFile} />
+                    <FileSubform id={file.id}
+                                 filename={file.filename}
+                                 content={file.content}
+                                 updateFile={this.updateFile} />
                 </div>
             )
         })
@@ -118,10 +146,28 @@ class GistForm extends Component {
             }
         });
 
-        this.state.client.post('gists', {
-            description: this.state.description,
-            public: this.state.public,
-            files: files,
+        let request = {};
+
+        if (this.props.gistId) {
+            request = {
+                method: 'patch',
+                url: 'gists/' + this.props.gistId,
+            };
+        } else {
+            request = {
+                method: 'post',
+                url: 'gists',
+            };
+        }
+
+        this.state.client({
+            method: request.method,
+            url: request.url,
+            data: {
+                description: this.state.description,
+                public: this.state.public,
+                files: files,
+            }
         }).then(response => {
             this.setState({
                 loading: false,
@@ -130,7 +176,6 @@ class GistForm extends Component {
             Swal.fire({
                 icon: 'success',
                 position: 'top-end',
-                title: 'Gist created successfully',
                 showConfirmButton: false,
                 timer: 2500,
             });
