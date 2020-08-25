@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
+import Swal from "sweetalert2";
 import File from "../file/File";
 import CommentList from "../comment-list/CommentList";
 
@@ -20,6 +22,8 @@ class GistDetails extends Component {
                 }
             }),
         }
+
+        this.deleteGist = this.deleteGist.bind(this);
     }
 
     componentDidMount() {
@@ -47,6 +51,38 @@ class GistDetails extends Component {
             })
     }
 
+    deleteGist() {
+        Swal.fire({
+            title: 'Are you sure?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes'
+        }).then(result => {
+            if (result.value) {
+                this.state.client.delete('gists/' + this.props.id)
+                    .then(response => {
+                        Swal.fire({
+                            title: 'Deleted',
+                            icon: 'success',
+                        })
+                    })
+            }
+        })
+    }
+
+    gistActions() {
+        return (
+            <div className="text-right">
+                <Link className="btn btn-primary mx-2" to={'/gist/edit/' + this.props.id}>
+                    Edit
+                </Link>
+                <button className="btn btn-danger mx-2" onClick={this.deleteGist}>
+                    Delete
+                </button>
+            </div>
+        )
+    }
+
     gistFiles() {
         return this.state.files.map((file, index) => {
             return (
@@ -66,7 +102,9 @@ class GistDetails extends Component {
                             <ClipLoader loading={this.state.loading} size={150} />
                         </div>
                     </div>
-
+                    <div className="col-12">
+                        { this.gistActions() }
+                    </div>
                     <div className="col-12 mb-5">
                         <h4>
                             { this.state.gist.description }
