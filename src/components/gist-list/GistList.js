@@ -9,6 +9,7 @@ class GistList extends Component {
 
         this.state = {
             gists: [],
+            allGists: [],
             loading: false,
             client: axios.create({
                 baseURL: 'https://api.github.com/',
@@ -18,6 +19,8 @@ class GistList extends Component {
                 }
             }),
         }
+
+        this.searchGist = this.searchGist.bind(this);
     }
 
     componentDidMount() {
@@ -33,9 +36,20 @@ class GistList extends Component {
             .then(response => {
                 this.setState({
                     gists: response.data,
+                    allGists: response.data,
                     loading: false,
                 });
             })
+    }
+
+    searchGist(event) {
+        let newGistList = this.state.allGists.filter(gist => {
+            return gist.description.toLowerCase().match(event.target.value.toLowerCase());
+        });
+
+        this.setState({
+            gists: newGistList,
+        })
     }
 
     selectGists() {
@@ -52,6 +66,17 @@ class GistList extends Component {
         return (
             <div>
                 <div className="row">
+                    <div className="col-12 mb-4">
+                        <div className="row">
+                            <div className="col-lg-4 col-md-6 offset-lg-8 offset-md-6">
+                                <input type="text"
+                                       className="form-control"
+                                       onChange={this.searchGist}
+                                       placeholder="Search"/>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="col-12">
                         <div className="row justify-content-center">
                             <ClipLoader loading={this.state.loading} size={150} />
