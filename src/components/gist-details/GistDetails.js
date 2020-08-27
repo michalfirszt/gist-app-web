@@ -5,6 +5,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import Swal from "sweetalert2";
 import File from "../file/File";
 import CommentList from "../comment-list/CommentList";
+import GistStar from "../gist-star/GistStar";
 
 class GistDetails extends Component {
     constructor(props) {
@@ -104,6 +105,9 @@ class GistDetails extends Component {
                     </div>
                     <div className="col-12">
                         { this.gistActions() }
+                    </div>
+                    <div className="col-12 text-right mt-2">
+                        <GistStar id={this.props.id} />
                     </div>
                     <div className="col-12 mb-5">
                         <h4>
