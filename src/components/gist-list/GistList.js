@@ -10,6 +10,7 @@ class GistList extends Component {
         this.state = {
             gists: [],
             allGists: [],
+            perPage: 5,
             loading: false,
             client: axios.create({
                 baseURL: 'https://api.github.com/',
@@ -62,6 +63,24 @@ class GistList extends Component {
         });
     }
 
+    paginationItems() {
+        let paginationItems = [];
+
+        for (let i = 0; i < (this.state.gists.length / this.state.perPage); i++) {
+            paginationItems.push(i + 1);
+        }
+
+        return paginationItems.map(pageNumber => {
+            return (
+                <li className="page-item" key={pageNumber}>
+                    <button className="page-link">
+                        { pageNumber }
+                    </button>
+                </li>
+            )
+        })
+    }
+
     render() {
         return (
             <div>
@@ -84,6 +103,14 @@ class GistList extends Component {
                     </div>
 
                     { this.selectGists() }
+                </div>
+
+                <div className="row justify-content-center">
+                    <nav>
+                        <ul className="pagination">
+                            { this.paginationItems() }
+                        </ul>
+                    </nav>
                 </div>
             </div>
         )

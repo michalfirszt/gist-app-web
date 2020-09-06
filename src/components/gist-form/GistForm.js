@@ -63,13 +63,11 @@ class GistForm extends Component {
     }
 
     addNewFile(filename = '', content = '') {
-        let newFileList = this.state.files;
-
-        newFileList.push({
+        let newFileList = [...this.state.files, {
             id: this.state.nextFileId,
             filename: filename,
             content: content,
-        });
+        }];
 
         this.setState({
             files: newFileList,
