@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import "./GistList.scss";
 import GistCard from "../gist-card/GistCard";
 import ClipLoader from "react-spinners/ClipLoader";
 import axios from "axios";
@@ -10,6 +11,7 @@ class GistList extends Component {
         this.state = {
             gists: [],
             allGists: [],
+            currentPage: 1,
             perPage: 5,
             loading: false,
             client: axios.create({
@@ -50,11 +52,20 @@ class GistList extends Component {
 
         this.setState({
             gists: newGistList,
+            currentPage: 1,
         })
     }
 
     selectGists() {
-        return this.state.gists.map(gist => {
+        let selectedGists = [];
+
+        this.state.gists.forEach((gist, index) => {
+            if (index >= (this.state.currentPage - 1) * this.state.perPage && index < this.state.currentPage * this.state.perPage) {
+                selectedGists.push(gist);
+            }
+        })
+
+        return selectedGists.map(gist => {
             return (
                 <div key={gist.id} className="col-12 mb-4">
                     <GistCard gist={gist} />
@@ -63,18 +74,29 @@ class GistList extends Component {
         });
     }
 
+    changePage(pageNumber) {
+        this.setState({
+            currentPage: pageNumber,
+        })
+    }
+
     paginationItems() {
-        let paginationItems = [];
+        let pages = [];
 
         for (let i = 0; i < (this.state.gists.length / this.state.perPage); i++) {
-            paginationItems.push(i + 1);
+            pages.push({
+                number: i +1,
+                active: this.state.currentPage !== i + 1,
+            });
         }
 
-        return paginationItems.map(pageNumber => {
+        return pages.map(page => {
             return (
-                <li className="page-item" key={pageNumber}>
-                    <button className="page-link">
-                        { pageNumber }
+                <li className="page-item" key={page.number}>
+                    <button className={"page-link " + (!page.active ? "btn-disabled" : "")}
+                            onClick={() => this.changePage(page.number)}
+                            disabled={!page.active}>
+                        { page.number }
                     </button>
                 </li>
             )
