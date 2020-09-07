@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import "./GistList.scss";
 import GistCard from "../gist-card/GistCard";
 import ClipLoader from "react-spinners/ClipLoader";
 import axios from "axios";
@@ -10,6 +11,9 @@ class GistList extends Component {
         this.state = {
             gists: [],
             allGists: [],
+            currentPage: 1,
+            perPage: 5,
+            perPageNumbers: [5, 10, 20],
             loading: false,
             client: axios.create({
                 baseURL: 'https://api.github.com/',
@@ -49,17 +53,71 @@ class GistList extends Component {
 
         this.setState({
             gists: newGistList,
+            currentPage: 1,
         })
     }
 
     selectGists() {
-        return this.state.gists.map(gist => {
+        let selectedGists = [];
+
+        this.state.gists.forEach((gist, index) => {
+            if (index >= (this.state.currentPage - 1) * this.state.perPage && index < this.state.currentPage * this.state.perPage) {
+                selectedGists.push(gist);
+            }
+        })
+
+        return selectedGists.map(gist => {
             return (
                 <div key={gist.id} className="col-12 mb-4">
                     <GistCard gist={gist} />
                 </div>
             )
         });
+    }
+
+    perPageItems() {
+        return this.state.perPageNumbers.map((number, index) => {
+            return (
+                <button className="dropdown-item" key={index} onClick={() => this.changePerPage(number)}>
+                    { number }
+                </button>
+            )
+        });
+    }
+
+    changePerPage(perPageNumber) {
+        this.setState({
+            perPage: perPageNumber,
+        })
+    }
+
+    changePage(pageNumber) {
+        this.setState({
+            currentPage: pageNumber,
+        })
+    }
+
+    paginationItems() {
+        let pages = [];
+
+        for (let i = 0; i < (this.state.gists.length / this.state.perPage); i++) {
+            pages.push({
+                number: i + 1,
+                active: this.state.currentPage !== i + 1,
+            });
+        }
+
+        return pages.map(page => {
+            return (
+                <li className="page-item" key={page.number}>
+                    <button className={"page-link " + (!page.active ? "btn-disabled" : "")}
+                            onClick={() => this.changePage(page.number)}
+                            disabled={!page.active}>
+                        { page.number }
+                    </button>
+                </li>
+            )
+        })
     }
 
     render() {
@@ -77,6 +135,21 @@ class GistList extends Component {
                         </div>
                     </div>
 
+                    <div className="col-12 mb-4">
+                        <div className="row text-right">
+                            <div className="col-lg-4 col-md-6 offset-lg-8 offset-md-6">
+                                <div className="dropdown">
+                                    <button className="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                                        Per page: { this.state.perPage }
+                                    </button>
+                                    <div className="dropdown-menu">
+                                        { this.perPageItems() }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="col-12">
                         <div className="row justify-content-center">
                             <ClipLoader loading={this.state.loading} size={150} />
@@ -84,6 +157,14 @@ class GistList extends Component {
                     </div>
 
                     { this.selectGists() }
+                </div>
+
+                <div className="row justify-content-center">
+                    <nav>
+                        <ul className="pagination">
+                            { this.paginationItems() }
+                        </ul>
+                    </nav>
                 </div>
             </div>
         )
