@@ -13,6 +13,7 @@ class GistList extends Component {
             allGists: [],
             currentPage: 1,
             perPage: 5,
+            perPageNumbers: [5, 10, 20],
             loading: false,
             client: axios.create({
                 baseURL: 'https://api.github.com/',
@@ -74,6 +75,22 @@ class GistList extends Component {
         });
     }
 
+    perPageItems() {
+        return this.state.perPageNumbers.map((number, index) => {
+            return (
+                <button className="dropdown-item" key={index} onClick={() => this.changePerPage(number)}>
+                    { number }
+                </button>
+            )
+        });
+    }
+
+    changePerPage(perPageNumber) {
+        this.setState({
+            perPage: perPageNumber,
+        })
+    }
+
     changePage(pageNumber) {
         this.setState({
             currentPage: pageNumber,
@@ -85,7 +102,7 @@ class GistList extends Component {
 
         for (let i = 0; i < (this.state.gists.length / this.state.perPage); i++) {
             pages.push({
-                number: i +1,
+                number: i + 1,
                 active: this.state.currentPage !== i + 1,
             });
         }
@@ -114,6 +131,21 @@ class GistList extends Component {
                                        className="form-control"
                                        onChange={this.searchGist}
                                        placeholder="Search"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-12 mb-4">
+                        <div className="row text-right">
+                            <div className="col-lg-4 col-md-6 offset-lg-8 offset-md-6">
+                                <div className="dropdown">
+                                    <button className="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                                        Per page: { this.state.perPage }
+                                    </button>
+                                    <div className="dropdown-menu">
+                                        { this.perPageItems() }
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
