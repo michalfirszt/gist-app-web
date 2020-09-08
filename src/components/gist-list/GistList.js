@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import "./GistList.scss";
+import axios from "axios";
 import GistCard from "../gist-card/GistCard";
 import ClipLoader from "react-spinners/ClipLoader";
-import axios from "axios";
+import GistPagination from "../gist-pagination/GistPagination";
 
 class GistList extends Component {
     constructor(props) {
@@ -25,6 +26,7 @@ class GistList extends Component {
         }
 
         this.searchGist = this.searchGist.bind(this);
+        this.changePage = this.changePage.bind(this);
     }
 
     componentDidMount() {
@@ -97,29 +99,6 @@ class GistList extends Component {
         })
     }
 
-    paginationItems() {
-        let pages = [];
-
-        for (let i = 0; i < (this.state.gists.length / this.state.perPage); i++) {
-            pages.push({
-                number: i + 1,
-                active: this.state.currentPage !== i + 1,
-            });
-        }
-
-        return pages.map(page => {
-            return (
-                <li className="page-item" key={page.number}>
-                    <button className={"page-link " + (!page.active ? "btn-disabled" : "")}
-                            onClick={() => this.changePage(page.number)}
-                            disabled={!page.active}>
-                        { page.number }
-                    </button>
-                </li>
-            )
-        })
-    }
-
     render() {
         return (
             <div>
@@ -159,13 +138,10 @@ class GistList extends Component {
                     { this.selectGists() }
                 </div>
 
-                <div className="row justify-content-center">
-                    <nav>
-                        <ul className="pagination">
-                            { this.paginationItems() }
-                        </ul>
-                    </nav>
-                </div>
+                <GistPagination elementsNumber={this.state.gists.length}
+                                perPage={this.state.perPage}
+                                currentPage={this.state.currentPage}
+                                changePage={this.changePage} />
             </div>
         )
     }
